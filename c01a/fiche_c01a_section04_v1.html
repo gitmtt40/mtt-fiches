@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C01-A · Section 04 · Journal de bord — Move to Top</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--blue:#008ec6;--orange:#f95900;--aqua:#03a8db;--teal:#008080;--gray:#e9eced;--dark:#1F2937;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:#e5e7eb;}
+body{font-family:"Inter",sans-serif;background:#e5e7eb;padding-bottom:100px;color:var(--dark);}
+.prog-wrap{background:#f1f5f9;border-bottom:1px solid #e2e8f0;padding:10px 28px;display:flex;align-items:center;gap:12px;}
+.prog-bar-bg{flex:1;height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#f95900,#ff8c42);border-radius:5px;transition:width .4s ease;width:0%;}
+#prog-txt{font-size:13px;color:#64748b;white-space:nowrap;font-weight:600;}
+#saved-ind{font-size:11px;color:#22c55e;opacity:0;transition:opacity .5s;font-weight:600;}
+.page{max-width:850px;margin:0 auto;padding:28px 24px 40px;}
+.header{background:#fff;border-radius:16px;border-bottom:4px solid var(--orange);padding:20px 26px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.logo-area{display:flex;align-items:center;gap:12px;}
+.logo-area img{height:46px;width:auto;}
+.brand-name{font-size:19px;font-weight:700;color:var(--blue);line-height:1.2;}
+.brand-tag{font-size:11px;color:#64748b;letter-spacing:.8px;text-transform:uppercase;}
+.header-badges{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.badge{font-size:12px;font-weight:700;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+.badge-comp{background:var(--blue);color:#fff;}
+.badge-sec{background:var(--orange);color:#fff;}
+.hero{background:linear-gradient(135deg,var(--orange) 0%,#ff8c42 100%);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:18px;color:#fff;box-shadow:0 4px 12px rgba(249,89,0,.2);}
+.hero-icon{width:60px;height:60px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero-title{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:6px;}
+.hero-sub{font-size:13px;opacity:.9;line-height:1.5;}
+.inline-inp{border:none;border-bottom:2px dashed rgba(255,255,255,.6);background:transparent;color:#fff;font-weight:700;width:160px;outline:none;padding:0 4px 2px;font-family:"Inter",sans-serif;font-size:13px;}
+.inline-inp:focus{border-bottom-color:#fff;}
+.nom-wrap{background:#fff;border-radius:14px;padding:16px 24px;margin-bottom:20px;display:flex;align-items:center;gap:12px;border:2px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,.03);}
+.nom-wrap label{font-size:14px;font-weight:700;color:#374151;white-space:nowrap;}
+.nom-wrap input[type=text]{flex:1;border:none;border-bottom:2px dashed #d1d5db;background:transparent;font-family:"Inter",sans-serif;font-size:15px;color:var(--dark);outline:none;padding:4px 6px;}
+.nom-wrap input:focus{border-bottom-color:var(--orange);}
+.nom-wrap input::placeholder{color:#9ca3af;}
+.sec-ok{opacity:0;transition:opacity .3s;color:#22c55e;font-size:18px;font-weight:700;flex-shrink:0;}
+[data-section].section-complete .sec-ok{opacity:1;}
+[data-section].section-complete{background:rgba(34,197,94,.04);border-radius:14px;padding:8px;}
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:6px;}
+.sec-dot{width:11px;height:11px;border-radius:50%;background:var(--blue);flex-shrink:0;}
+.sec-dot-o{width:11px;height:11px;border-radius:50%;background:var(--orange);flex-shrink:0;}
+.sec-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--blue);}
+.sec-label-o{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--orange);}
+.info-banner{background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#166534;display:flex;align-items:center;gap:10px;line-height:1.6;box-shadow:0 2px 6px rgba(134,239,172,.1);}
+.engagement{background:#fff7ed;border:2px solid var(--orange);border-radius:16px;padding:18px 22px;margin-bottom:20px;box-shadow:0 3px 10px rgba(249,89,0,.08);}
+.eng-title{font-size:13px;font-weight:700;color:var(--orange);text-transform:uppercase;margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:.5px;}
+.eng-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.eng-field{background:#fff;border:2px solid #fed7aa;border-radius:10px;padding:14px 16px;}
+.eng-label{font-size:12px;font-weight:700;color:#9a3412;margin-bottom:8px;letter-spacing:.3px;}
+.write-ta{width:100%;border:none;border-bottom:2px dashed #d1d5db;background:transparent;font-family:"Inter",sans-serif;font-size:14px;color:var(--dark);resize:none;overflow:hidden;min-height:28px;outline:none;padding:4px 2px;line-height:1.6;}
+.write-ta:focus{border-bottom-color:var(--orange);}
+.write-ta::placeholder{color:#9ca3af;}
+.heure-box{background:#fff7ed;border:2px solid #fed7aa;border-radius:8px;padding:8px 16px;display:inline-block;}
+.heure-inp{border:none;background:transparent;font-size:20px;font-weight:800;color:var(--orange);width:90px;outline:none;font-family:"Inter",sans-serif;text-align:center;}
+.semaine-wrap{margin-bottom:20px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 3px 12px rgba(0,0,0,.06);}
+.semaine-header{display:grid;grid-template-columns:110px 1fr 90px 120px;background:var(--blue);padding:12px 14px;gap:10px;}
+.sh-cell{font-size:12px;font-weight:700;color:#fff;text-align:center;letter-spacing:.4px;}
+.sh-cell:first-child{text-align:left;}
+.jour-row{display:grid;grid-template-columns:110px 1fr 90px 120px;border-bottom:2px solid #f1f5f9;gap:10px;padding:12px 14px;align-items:center;}
+.jour-row:last-child{border-bottom:none;}
+.jour-cell{font-size:13px;display:flex;align-items:center;}
+.jour-name{font-weight:700;color:var(--dark);font-size:14px;}
+.jour-odd{background:#fafbfc;} .jour-even{background:#fff;}
+.circle-check-label{cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.circle-check-label input{position:absolute;opacity:0;width:0;height:0;}
+.circle-check-label .ring{width:28px;height:28px;border:2.5px solid #cbd5e1;border-radius:50%;transition:all .2s;display:flex;align-items:center;justify-content:center;}
+.circle-check-label:has(input:checked) .ring{background:var(--blue);border-color:var(--blue);}
+.circle-check-label:has(input:checked) .ring::after{content:"✓";color:#fff;font-size:14px;font-weight:700;}
+.emoji-mood{display:flex;gap:6px;align-items:center;justify-content:center;}
+.mood-btn{font-size:20px;cursor:pointer;padding:4px 6px;border-radius:8px;border:2px solid transparent;transition:all .2s;line-height:1;}
+.mood-btn:hover{transform:scale(1.1);}
+.mood-btn.sel{border-color:var(--blue);background:#e6f4fb;transform:scale(1.15);}
+.semaine-footer{background:#f0f9ff;border-top:2px solid #bae6fd;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.sf-label{font-size:12px;color:#0369a1;font-weight:700;letter-spacing:.3px;}
+.star-wrap{display:flex;gap:6px;align-items:center;}
+.star{font-size:22px;cursor:pointer;transition:all .2s;filter:grayscale(1);opacity:.5;}
+.star:hover{transform:scale(1.15);}
+.star.on{filter:none;opacity:1;transform:scale(1.1);}
+.reflexion-box{background:#fff;border-radius:14px;padding:18px 20px;margin-bottom:20px;border:2px solid #e2e8f0;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.r-q{margin-bottom:16px;}
+.r-q-label{font-size:14px;color:#374151;margin-bottom:8px;line-height:1.6;display:flex;align-items:baseline;gap:8px;font-weight:600;}
+.q-num{display:inline-flex;width:22px;height:22px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;border-radius:50%;align-items:center;justify-content:center;flex-shrink:0;}
+.victoire{background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #4ade80;border-radius:16px;padding:18px 22px;margin-bottom:20px;display:flex;gap:16px;box-shadow:0 3px 10px rgba(74,222,128,.15);}
+.victoire-icon{width:50px;height:50px;background:#22c55e;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.victoire-title{font-size:14px;font-weight:700;color:#166534;margin-bottom:6px;}
+.victoire-sub{font-size:12px;color:#166534;margin-bottom:10px;line-height:1.5;}
+.defi-next{background:var(--blue);border-radius:16px;padding:18px 22px;margin-bottom:18px;box-shadow:0 4px 12px rgba(0,142,198,.2);}
+.dn-title{color:#fff;font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px;letter-spacing:.3px;}
+.dn-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.dn-field{background:rgba(255,255,255,.15);border-radius:10px;padding:12px 14px;border:1px solid rgba(255,255,255,.1);}
+.dn-label{font-size:11px;color:rgba(255,255,255,.85);margin-bottom:8px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;}
+.dn-ta{width:100%;border:none;border-bottom:2px dashed rgba(255,255,255,.4);background:transparent;font-family:"Inter",sans-serif;font-size:13px;color:#fff;resize:none;overflow:hidden;min-height:26px;outline:none;padding:3px 0;line-height:1.5;font-weight:500;}
+.dn-ta::placeholder{color:rgba(255,255,255,.5);}
+.dn-ta:focus{border-bottom-color:rgba(255,255,255,.8);}
+.encourage{background:#fef3c7;border-radius:12px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:center;gap:12px;border:2px solid #fde047;box-shadow:0 2px 8px rgba(254,243,199,.3);}
+.enc-text{font-size:13px;color:#92400e;line-height:1.6;font-weight:500;}
+.footer{background:#fff;border-radius:14px;padding:14px 24px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;border:1px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,.03);}
+.footer-code{font-size:10px;color:#9ca3af;}
+.footer-brand{font-size:13px;font-weight:700;color:var(--blue);}
+.footer-brand span{color:var(--orange);}
+.footer-url{font-size:10px;color:#9ca3af;}
+.print-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(255,255,255,1) 70%,transparent);padding:12px 0 20px;display:flex;justify-content:center;pointer-events:none;z-index:99;}
+.btn-print{pointer-events:all;background:linear-gradient(135deg,var(--orange),#ff8c42);color:#fff;border:none;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:700;cursor:pointer;font-family:"Inter",sans-serif;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(249,89,0,.3);transition:transform .2s;}
+.btn-print:hover{transform:translateY(-2px);}
+.btn-print.complete{background:linear-gradient(135deg,#16a34a,#22c55e);}
+#celebration{position:fixed;top:70px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:12px 26px;border-radius:14px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(22,197,94,.4);opacity:0;transition:opacity .4s;z-index:200;pointer-events:none;white-space:nowrap;}
+@media print{@page{size:A4;margin:12mm 18mm;}html{background:#fff;}body{width:100%;padding:0;background:#fff;}.print-bar,.prog-wrap,#celebration,#saved-ind{display:none!important;}*{-webkit-print-color-adjust:exact;print-color-adjust:exact;box-shadow:none!important;}[data-section],.hero,.header,.engagement,.defi-next,.victoire{break-inside:avoid;}.page{padding:0;}}
+@media(max-width:700px){.page{padding:16px;}.prog-wrap{padding:10px 16px;}.eng-grid,.dn-grid{grid-template-columns:1fr!important;}.btn-print{width:calc(100% - 32px);justify-content:center;}.semaine-header,.jour-row{grid-template-columns:90px 1fr 70px 100px;gap:8px;}.hero{flex-direction:column;text-align:center;}}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap">
+  <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill"></div></div>
+  <span id="prog-txt">0 section sur 5 complétée</span>
+  <span id="saved-ind" aria-live="polite">✓ Sauvegardé</span>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="logo-area">
+      <img src="https://movetotop.com/wp-content/uploads/2023/04/MTT_Logo_2023.png" 
+           onerror="this.style.display='none'" 
+           alt="Logo Move to Top">
+      <div><div class="brand-name">Move to Top</div><div class="brand-tag">Créateur de Champions</div></div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-comp">C01.1 — Initiation devoirs</span>
+      <span class="badge badge-sec">Section 04 — Action & Bilan</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="32" height="32" viewBox="0 0 28 28" fill="none"><rect x="4" y="3" width="20" height="22" rx="3" stroke="#fff" stroke-width="2"/><path d="M9 9h10M9 13h10M9 17h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/><path d="M20 19l2 2 3-3" stroke="#f95900" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <div>
+      <div class="hero-title">Mon journal de bord — Plan d'action</div>
+      <div class="hero-sub">Section 04 · Action & Bilan · C01-A — Démarrer sans conflit<br>Semaine du : <input type="text" data-s="semaine" class="inline-inp" placeholder="ex : 28 avr. au 2 mai" aria-label="Semaine du" maxlength="28"></div>
+    </div>
+  </div>
+
+  <div class="nom-wrap" data-section="0">
+    <label for="nom">Prénom et Nom</label>
+    <input id="nom" type="text" data-s="nom" data-req placeholder="Écris ton prénom et ton nom ici">
+    <span class="sec-ok">✓</span>
+  </div>
+
+  <div class="info-banner">
+    <svg width="16" height="16" viewBox="0 0 14 14" fill="none"><path d="M2 7l4 4 6-7" stroke="#166534" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Tu as appris que <strong>les 5 minutes qui suivent un apprentissage sont les plus puissantes.</strong> Utilise ce journal pour ancrer ce que tu as appris — chaque soir, en 3 minutes.</span>
+  </div>
+
+  <!-- ENGAGEMENT -->
+  <div data-section="1">
+    <div class="engagement">
+      <div class="eng-title">
+        <svg width="15" height="15" viewBox="0 0 13 13" fill="none"><path d="M6.5 1.5l1.3 2.6 2.9.4-2.1 2 .5 2.9L6.5 8l-2.6 1.4.5-2.9-2.1-2 2.9-.4L6.5 1.5z" fill="#f95900"/></svg>
+        Mon engagement de la semaine
+      </div>
+      <div class="eng-grid">
+        <div class="eng-field">
+          <div class="eng-label">L'outil que je vais appliquer</div>
+          <textarea class="write-ta" data-s="outil-semaine" data-req rows="2" placeholder="Décris avec tes propres mots…"></textarea>
+        </div>
+        <div class="eng-field">
+          <div class="eng-label">Mon heure de devoirs fixe chaque jour</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:8px;">
+            <div class="heure-box"><input class="heure-inp" type="text" data-s="heure-fixe" data-req placeholder="___h___" maxlength="8" aria-label="Heure fixe"></div>
+            <div style="font-size:11px;color:#9a3412;line-height:1.4;font-weight:600;">Chaque jour<br>sans exception</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <span class="sec-ok" style="display:none">✓</span>
+  </div>
+
+  <!-- TABLEAU SEMAINE -->
+  <div data-section="2">
+    <div class="sec-title">
+      <div class="sec-dot"></div>
+      <span class="sec-label">Suivi de la semaine — 1 ligne par soir</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="semaine-wrap">
+      <div class="semaine-header">
+        <div class="sh-cell">JOUR</div>
+        <div class="sh-cell">CE QUE J'AI FAIT / ESSAYÉ</div>
+        <div class="sh-cell">COMMENCÉ ?</div>
+        <div class="sh-cell">COMMENT ?</div>
+      </div>
+      <div class="jour-row jour-odd">
+        <div class="jour-cell"><span class="jour-name">🌙 Lundi</span></div>
+        <div class="jour-cell"><textarea class="write-ta" data-s="fait-lundi" data-req rows="1" placeholder="Qu'est-ce que tu as essayé ce soir ?"></textarea></div>
+        <div class="jour-cell" style="justify-content:center;"><label class="circle-check-label"><input type="checkbox" data-s="ok-lundi"><div class="ring"></div></label></div>
+        <div class="emoji-mood">
+          <span class="mood-btn" data-j="lundi" data-v="bien" onclick="pickMood(this)" title="Bien">😊</span>
+          <span class="mood-btn" data-j="lundi" data-v="moyen" onclick="pickMood(this)" title="Moyen">😐</span>
+          <span class="mood-btn" data-j="lundi" data-v="dur" onclick="pickMood(this)" title="Difficile">😟</span>
+        </div>
+      </div>
+      <div class="jour-row jour-even">
+        <div class="jour-cell"><span class="jour-name">🌙 Mardi</span></div>
+        <div class="jour-cell"><textarea class="write-ta" data-s="fait-mardi" data-req rows="1" placeholder="Qu'est-ce que tu as essayé ce soir ?"></textarea></div>
+        <div class="jour-cell" style="justify-content:center;"><label class="circle-check-label"><input type="checkbox" data-s="ok-mardi"><div class="ring"></div></label></div>
+        <div class="emoji-mood">
+          <span class="mood-btn" data-j="mardi" data-v="bien" onclick="pickMood(this)">😊</span>
+          <span class="mood-btn" data-j="mardi" data-v="moyen" onclick="pickMood(this)">😐</span>
+          <span class="mood-btn" data-j="mardi" data-v="dur" onclick="pickMood(this)">😟</span>
+        </div>
+      </div>
+      <div class="jour-row jour-odd">
+        <div class="jour-cell"><span class="jour-name">🌙 Mercredi</span></div>
+        <div class="jour-cell"><textarea class="write-ta" data-s="fait-mercredi" data-req rows="1" placeholder="Qu'est-ce que tu as essayé ce soir ?"></textarea></div>
+        <div class="jour-cell" style="justify-content:center;"><label class="circle-check-label"><input type="checkbox" data-s="ok-mercredi"><div class="ring"></div></label></div>
+        <div class="emoji-mood">
+          <span class="mood-btn" data-j="mercredi" data-v="bien" onclick="pickMood(this)">😊</span>
+          <span class="mood-btn" data-j="mercredi" data-v="moyen" onclick="pickMood(this)">😐</span>
+          <span class="mood-btn" data-j="mercredi" data-v="dur" onclick="pickMood(this)">😟</span>
+        </div>
+      </div>
+      <div class="jour-row jour-even">
+        <div class="jour-cell"><span class="jour-name">🌙 Jeudi</span></div>
+        <div class="jour-cell"><textarea class="write-ta" data-s="fait-jeudi" data-req rows="1" placeholder="Qu'est-ce que tu as essayé ce soir ?"></textarea></div>
+        <div class="jour-cell" style="justify-content:center;"><label class="circle-check-label"><input type="checkbox" data-s="ok-jeudi"><div class="ring"></div></label></div>
+        <div class="emoji-mood">
+          <span class="mood-btn" data-j="jeudi" data-v="bien" onclick="pickMood(this)">😊</span>
+          <span class="mood-btn" data-j="jeudi" data-v="moyen" onclick="pickMood(this)">😐</span>
+          <span class="mood-btn" data-j="jeudi" data-v="dur" onclick="pickMood(this)">😟</span>
+        </div>
+      </div>
+      <div class="jour-row jour-odd">
+        <div class="jour-cell"><span class="jour-name">🌙 Vendredi</span></div>
+        <div class="jour-cell"><textarea class="write-ta" data-s="fait-vendredi" data-req rows="1" placeholder="Qu'est-ce que tu as essayé ce soir ?"></textarea></div>
+        <div class="jour-cell" style="justify-content:center;"><label class="circle-check-label"><input type="checkbox" data-s="ok-vendredi"><div class="ring"></div></label></div>
+        <div class="emoji-mood">
+          <span class="mood-btn" data-j="vendredi" data-v="bien" onclick="pickMood(this)">😊</span>
+          <span class="mood-btn" data-j="vendredi" data-v="moyen" onclick="pickMood(this)">😐</span>
+          <span class="mood-btn" data-j="vendredi" data-v="dur" onclick="pickMood(this)">😟</span>
+        </div>
+      </div>
+      <div class="semaine-footer">
+        <div class="sf-label">MON SCORE DE LA SEMAINE</div>
+        <div class="star-wrap" data-g="score-semaine" id="sw-score">
+          <span class="star" data-n="1" onclick="pickStar(this)">⭐</span>
+          <span class="star" data-n="2" onclick="pickStar(this)">⭐</span>
+          <span class="star" data-n="3" onclick="pickStar(this)">⭐</span>
+          <span class="star" data-n="4" onclick="pickStar(this)">⭐</span>
+          <span class="star" data-n="5" onclick="pickStar(this)">⭐</span>
+          <span style="font-size:11px;color:#0369a1;margin-left:8px;font-weight:700;">/ 5 jours</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RÉFLEXION BILAN -->
+  <div data-section="3">
+    <div class="sec-title">
+      <div class="sec-dot-o"></div>
+      <span class="sec-label-o">Bilan de fin de semaine — 3 questions</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="reflexion-box">
+      <div class="r-q">
+        <div class="r-q-label"><span class="q-num">1</span>Ce qui a le mieux marché cette semaine pour démarrer mes devoirs :</div>
+        <textarea class="write-ta" data-s="bilan-q1" data-req rows="2" placeholder="Qu'est-ce que tu as remarqué ?"></textarea>
+      </div>
+      <div class="r-q">
+        <div class="r-q-label"><span class="q-num">2</span>Le moment où j'ai eu du mal à commencer — et ce que j'ai essayé :</div>
+        <textarea class="write-ta" data-s="bilan-q2" data-req rows="2" placeholder="Décris avec tes propres mots…"></textarea>
+      </div>
+      <div class="r-q" style="margin-bottom:0">
+        <div class="r-q-label"><span class="q-num">3</span>Une chose que je veux faire différemment la semaine prochaine :</div>
+        <textarea class="write-ta" data-s="bilan-q3" data-req rows="2" placeholder="Écris avec tes mots…"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- VICTOIRE + DÉFI -->
+  <div data-section="4">
+    <div class="victoire">
+      <div class="victoire-icon">
+        <svg width="26" height="26" viewBox="0 0 22 22" fill="none"><path d="M11 3l2 4 4.5.6-3.2 3.1.8 4.5L11 13l-4 2.2.8-4.5L4.5 7.6 9 7 11 3z" stroke="#fff" stroke-width="1.8" stroke-linejoin="round" fill="rgba(255,255,255,0.3)"/></svg>
+      </div>
+      <div style="flex:1;">
+        <div class="victoire-title">Ma victoire de la semaine</div>
+        <div class="victoire-sub">Même petite, elle compte. Une fois que tu as commencé, tu as déjà gagné.</div>
+        <textarea class="write-ta" data-s="victoire" data-req rows="1" placeholder="Écris avec tes mots…" style="border-bottom-color:#86efac;color:#166534;font-weight:600"></textarea>
+      </div>
+    </div>
+    <div class="defi-next">
+      <div class="dn-title">
+        <svg width="15" height="15" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v11M1 6.5h11" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+        Mon plan pour la semaine prochaine
+      </div>
+      <div class="dn-grid">
+        <div class="dn-field">
+          <div class="dn-label">L'outil que je continue / teste</div>
+          <textarea class="dn-ta" data-s="plan-outil" data-req rows="2" placeholder="Décris avec tes propres mots…"></textarea>
+        </div>
+        <div class="dn-field">
+          <div class="dn-label">Mon objectif précis (1 seul)</div>
+          <textarea class="dn-ta" data-s="plan-objectif" data-req rows="2" placeholder="Écris avec tes mots…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENCOURAGEMENT -->
+  <div data-section="5">
+    <div class="encourage">
+      <div style="font-size:26px;">💡</div>
+      <div class="enc-text"><strong>Rappelle-toi :</strong> la motivation arrive <em>après</em> le premier geste — jamais avant. Tu n'as pas besoin d'attendre le bon moment. Fais le premier geste. Juste le premier. Le reste suit.</div>
+    </div>
+    <span class="sec-ok" style="display:none">✓</span>
+  </div>
+
+  <div class="footer">
+    <div class="footer-code">C01-S04 · C01.1 Initiation devoirs · Section 04 — Action & Bilan · v4.0 Improved · Avril 2026</div>
+    <div class="footer-brand">Move to <span>Top</span> · Créateur de Champions</div>
+    <div class="footer-url">movetotop.com</div>
+  </div>
+</div>
+
+<div class="print-bar">
+  <button class="btn-print" id="btn-print" onclick="window.print()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Imprimer · Sauvegarder en PDF
+  </button>
+</div>
+<div id="celebration" aria-live="assertive"></div>
+
+<script>
+const ID="mtt-c01a-s04-fiche";
+function save(k,v){try{localStorage.setItem(ID+":"+k,v);pulse();}catch(e){}}
+function load(k){try{return localStorage.getItem(ID+":"+k);}catch(e){return null;}}
+function pulse(){const s=document.getElementById("saved-ind");s.style.opacity="1";clearTimeout(s._t);s._t=setTimeout(()=>s.style.opacity="0",1500);}
+function showBanner(msg,dur){const b=document.getElementById("celebration");b.textContent=msg;b.style.opacity="1";setTimeout(()=>b.style.opacity="0",dur);}
+let _celeb=new Set();
+function checkSection(sec){const reqs=[...sec.querySelectorAll("[data-req]")];const done=reqs.every(f=>f.type==="checkbox"?f.checked:f.value.trim()!=="");const was=sec.classList.contains("section-complete");sec.classList.toggle("section-complete",done);if(done&&!was&&!_celeb.has(sec.dataset.section)){_celeb.add(sec.dataset.section);showBanner("✓ Section terminée — bien joué !",2200);}return done;}
+function checkAll(){const secs=[...document.querySelectorAll("[data-section]")];const n=secs.filter(s=>checkSection(s)).length;const pct=secs.length?Math.round(n/secs.length*100):0;document.getElementById("prog-fill").style.width=pct+"%";document.getElementById("prog-txt").textContent=n+" section"+(n>1?"s":"")+" sur "+secs.length+" complétée"+(n>1?"s":"");if(n===secs.length&&secs.length>0)ficheComplete();}
+function ficheComplete(){const btn=document.getElementById("btn-print");if(btn&&!btn.classList.contains("complete")){btn.classList.add("complete");btn.innerHTML="🎉 Fiche complète — Imprimer / Sauvegarder";if(!load("_felicite")){save("_felicite","1");showBanner("🎉 Bravo — ta fiche est complète !",4000);}}}
+function grow(el){el.style.height="auto";el.style.height=el.scrollHeight+"px";}
+document.querySelectorAll("input[type=text][data-s]").forEach(el=>{const sv=load(el.dataset.s);if(sv)el.value=sv;el.addEventListener("input",()=>{save(el.dataset.s,el.value);checkAll();});});
+document.querySelectorAll("input[type=checkbox][data-s]").forEach(el=>{const sv=load(el.dataset.s);if(sv==="1")el.checked=true;el.addEventListener("change",()=>{save(el.dataset.s,el.checked?"1":"0");checkAll();});});
+document.querySelectorAll("textarea[data-s],.dn-ta[data-s]").forEach(t=>{const sv=load(t.dataset.s);if(sv){t.value=sv;grow(t);}t.addEventListener("input",function(){grow(this);save(this.dataset.s,this.value);checkAll();});});
+function pickMood(btn){const j=btn.dataset.j;document.querySelectorAll(".mood-btn[data-j="+j+"]").forEach(b=>b.classList.remove("sel"));btn.classList.add("sel");save("mood:"+j,btn.dataset.v);checkAll();}
+window.pickMood=pickMood;
+["lundi","mardi","mercredi","jeudi","vendredi"].forEach(j=>{const sv=load("mood:"+j);if(sv){const b=document.querySelector(".mood-btn[data-j="+j+"][data-v="+sv+"]");if(b)b.classList.add("sel");}});
+function pickStar(btn){const sw=btn.closest(".star-wrap");const n=parseInt(btn.dataset.n);sw._val=n;sw.querySelectorAll(".star").forEach(s=>s.classList.toggle("on",parseInt(s.dataset.n)<=n));save("st:score-semaine",n.toString());checkAll();}
+window.pickStar=pickStar;
+const svStar=load("st:score-semaine");
+if(svStar){const sw=document.getElementById("sw-score");if(sw){sw._val=parseInt(svStar);sw.querySelectorAll(".star").forEach(s=>s.classList.toggle("on",parseInt(s.dataset.n)<=parseInt(svStar)));}}
+const navInputs=[...document.querySelectorAll("input[type=text],textarea")];
+navInputs.forEach((el,i)=>el.addEventListener("keydown",e=>{if(e.key==="Enter"&&el.tagName!=="TEXTAREA"){e.preventDefault();if(navInputs[i+1])navInputs[i+1].focus();}}));
+checkAll();
+</script>
+</body>
+</html>
