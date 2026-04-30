@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>C01-A · Section 03 · Je crée mon rituel — Move to Top</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{--blue:#008ec6;--orange:#f95900;--aqua:#03a8db;--teal:#008080;--gray:#e9eced;--dark:#1F2937;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{background:#e5e7eb;}
+body{font-family:"Inter",sans-serif;background:#e5e7eb;padding-bottom:100px;color:var(--dark);}
+
+/* Progress Bar - Synchronisée avec S02 */
+.prog-wrap{background:#f1f5f9;border-bottom:1px solid #e2e8f0;padding:10px 28px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:100;}
+.prog-bar-bg{flex:1;height:10px;background:#e2e8f0;border-radius:5px;overflow:hidden;}
+.prog-bar-fill{height:100%;background:linear-gradient(90deg,#008ec6,#03a8db);border-radius:5px;transition:width .4s ease;width:0%;}
+#prog-txt{font-size:13px;color:#64748b;white-space:nowrap;font-weight:600;}
+#saved-ind{font-size:11px;color:#22c55e;opacity:0;transition:opacity .5s;font-weight:600;}
+
+.page{max-width:850px;margin:0 auto;padding:28px 24px 40px;}
+
+/* Header - Style S02 (Orange border) */
+.header{background:#fff;border-radius:16px;border-bottom:4px solid var(--orange);padding:20px 26px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 2px 8px rgba(0,0,0,.04);}
+.logo-area{display:flex;align-items:center;gap:12px;}
+.logo-area img{height:46px;width:auto;}
+.brand-name{font-size:19px;font-weight:700;color:var(--blue);line-height:1.2;}
+.brand-tag{font-size:11px;color:#64748b;letter-spacing:.8px;text-transform:uppercase;}
+.header-badges{display:flex;flex-direction:column;gap:6px;align-items:flex-end;}
+.badge{font-size:12px;font-weight:700;border-radius:20px;padding:4px 13px;white-space:nowrap;}
+.badge-comp{background:var(--orange);color:#fff;}
+.badge-sec{background:var(--blue);color:#fff;}
+
+/* Hero - Style S02 (Blue gradient) */
+.hero{background:linear-gradient(135deg, var(--blue) 0%, var(--aqua) 100%);border-radius:16px;padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:18px;color:#fff;box-shadow:0 4px 12px rgba(0,142,198,.2);}
+.hero-icon{width:60px;height:60px;background:rgba(255,255,255,.2);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero-title{font-size:22px;font-weight:700;line-height:1.3;margin-bottom:6px;}
+.hero-sub{font-size:13px;opacity:.9;line-height:1.5;}
+
+.nom-wrap{background:#fff;border-radius:14px;padding:16px 24px;margin-bottom:20px;display:flex;align-items:center;gap:12px;border:2px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,.03);}
+.nom-wrap label{font-size:14px;font-weight:700;color:#374151;white-space:nowrap;}
+.nom-wrap input{flex:1;border:none;border-bottom:2px dashed #d1d5db;background:transparent;font-family:"Inter",sans-serif;font-size:15px;color:var(--dark);outline:none;padding:4px 6px;}
+.nom-wrap input:focus{border-bottom-color:var(--blue);}
+
+.sec-ok{opacity:0;transition:opacity .3s;color:#22c55e;font-size:18px;font-weight:700;flex-shrink:0;}
+[data-section].section-complete .sec-ok{opacity:1;}
+[data-section].section-complete{background:rgba(34,197,94,.03);border-radius:14px;}
+
+.sec-title{display:flex;align-items:center;gap:10px;margin-bottom:14px;margin-top:6px;}
+.sec-dot{width:11px;height:11px;border-radius:50%;background:var(--orange);flex-shrink:0;}
+.sec-label{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--orange);}
+
+.intro-box{background:#f0f9ff;border-left:4px solid var(--blue);border-radius:0 12px 12px 0;padding:13px 18px;margin-bottom:20px;font-size:13px;color:#0c4a6e;line-height:1.6;}
+
+/* Ritual Steps */
+.ritual-step{background:#fff;border-radius:16px;border:2px solid #e2e8f0;padding:20px;margin-bottom:16px;transition:all .2s;box-shadow:0 2px 6px rgba(0,0,0,.02);}
+.ritual-step:hover{border-color:var(--blue);transform: translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.05);}
+.step-header{display:flex;align-items:center;gap:12px;margin-bottom:15px;}
+.step-num{width:28px;height:28px;background:var(--blue);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.step-title{font-size:15px;font-weight:700;color:var(--dark);}
+
+.options-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;}
+.opt-label{display:block;cursor:pointer;border:2px solid var(--gray);border-radius:12px;padding:12px;transition:all .2s;background:#f9fafb;position:relative;}
+.opt-label input{position:absolute;opacity:0;}
+.opt-label:has(input:checked){border-color:var(--blue);background:#e6f4fb;}
+.opt-text{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;}
+.opt-desc{font-size:11px;color:#64748b;margin-top:4px;display:block;}
+
+.write-field{margin-top:12px;}
+.write-field label{font-size:12px;color:#9ca3af;display:block;margin-bottom:4px;font-weight:600;}
+.write-field textarea, .write-field input[type=text]{width:100%;border:none;border-bottom:2px dashed #d1d5db;background:transparent;font-family:"Inter",sans-serif;font-size:14px;color:var(--dark);outline:none;padding:4px 2px;line-height:1.6;}
+.write-field textarea:focus, .write-field input[type=text]:focus{border-bottom-color:var(--blue);}
+
+/* Power Move & Signature */
+.power-move-box{background:linear-gradient(135deg, #fff7ed, #ffedd5);border:2px solid var(--orange);border-radius:16px;padding:20px;margin-top:20px;box-shadow:0 4px 12px rgba(249,89,0,.1);}
+.pm-header{color:var(--orange);font-weight:800;font-size:14px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+
+/* Countdown Styles */
+.countdown-row{display:flex;gap:15px;margin-top:15px;}
+.c-box{flex:1;background:#fff;border:3px solid var(--blue);border-radius:12px;padding:10px;text-align:center;font-weight:900;font-size:24px;color:var(--blue);box-shadow:0 3px 0 var(--gray);}
+
+/* Footer avec Logo */
+.footer{background:#fff;border-radius:14px;padding:14px 24px;margin-top:24px;display:flex;align-items:center;justify-content:space-between;border:1px solid #e2e8f0;box-shadow:0 2px 6px rgba(0,0,0,.03);}
+.footer-code{font-size:10px;color:#9ca3af;}
+.footer-brand-logo img{height:32px;width:auto;}
+.footer-brand{font-size:13px;font-weight:700;color:var(--blue);display:flex;align-items:center;gap:8px;}
+.footer-brand span{color:var(--orange);}
+
+.print-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(255,255,255,1) 70%,transparent);padding:12px 0 20px;display:flex;justify-content:center;pointer-events:none;z-index:99;}
+.btn-print{pointer-events:all;background:linear-gradient(135deg,var(--blue),var(--aqua));color:#fff;border:none;border-radius:12px;padding:14px 32px;font-size:15px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:10px;box-shadow:0 4px 16px rgba(0,142,198,.3);transition:transform .2s;}
+.btn-print:hover{transform:translateY(-2px);}
+.btn-print.complete{background:linear-gradient(135deg,#16a34a,#22c55e);}
+
+#celebration{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#22c55e,#16a34a);color:#fff;padding:12px 26px;border-radius:14px;font-size:14px;font-weight:700;box-shadow:0 8px 24px rgba(22,197,94,.4);opacity:0;transition:opacity .4s;z-index:200;pointer-events:none;}
+
+@media print{
+  @page{size:A4;margin:12mm 15mm;}
+  .print-bar,.prog-wrap,#celebration,#saved-ind{display:none!important;}
+  body{background:#fff;padding-bottom:0;}
+  .page{padding:0;}
+  .ritual-step{break-inside:avoid;border:1px solid #eee;}
+  * {-webkit-print-color-adjust: exact; print-color-adjust: exact;}
+}
+</style>
+</head>
+<body>
+
+<div class="prog-wrap">
+  <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-fill"></div></div>
+  <span id="prog-txt">0 section sur 5 complétée</span>
+  <span id="saved-ind">✓ Sauvegardé</span>
+</div>
+
+<div class="page">
+
+  <!-- Header Uniformisé -->
+  <div class="header">
+    <div class="logo-area">
+      <img src="../assets/logo.png" onerror="this.src='https://movetotop.com/wp-content/uploads/2023/04/MTT_Logo_2023.png'" alt="Logo Move to Top">
+      <div>
+        <div class="brand-name">Move to Top</div>
+        <div class="brand-tag">Créateur de Champions</div>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-comp">C01.1 — Initiation devoirs</span>
+      <span class="badge badge-sec">Section 03 — Agir</span>
+    </div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-icon">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+    </div>
+    <div>
+      <div class="hero-title">Je crée mon rituel de démarrage</div>
+      <div class="hero-sub">Section 03 · Action · Transformer l'intention en mouvement · 10-12 ans</div>
+    </div>
+  </div>
+
+  <div class="nom-wrap" data-section="0">
+    <label for="nom">Prénom et Nom</label>
+    <input id="nom" type="text" data-s="nom" data-req placeholder="Écris ton prénom et ton nom ici">
+    <span class="sec-ok">✓</span>
+  </div>
+
+  <div class="intro-box">
+    <strong>Le secret des champions ?</strong> Ils ne se demandent pas s'ils ont envie. Ils lancent un <strong>rituel</strong> qui prépare leur cerveau automatiquement. Ton rituel doit durer moins de 2 minutes.
+  </div>
+
+  <!-- ETAPE 1 -->
+  <div class="ritual-step" data-section="1">
+    <div class="sec-title">
+      <div class="sec-dot"></div>
+      <span class="sec-label">Étape 1 — Mon cockpit</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="step-header">
+      <div class="step-num">1</div>
+      <div class="step-title">Je prépare mon espace</div>
+    </div>
+    <div class="options-grid">
+      <label class="opt-label">
+        <input type="checkbox" data-s="opt-bureau" data-req>
+        <span class="opt-text">🪑 Bureau vidé</span>
+        <span class="opt-desc">Seulement ce dont j'ai besoin</span>
+      </label>
+      <label class="opt-label">
+        <input type="checkbox" data-s="opt-tel">
+        <span class="opt-text">📱 Mode Avion</span>
+        <span class="opt-desc">Ou téléphone dans une autre pièce</span>
+      </label>
+      <label class="opt-label">
+        <input type="checkbox" data-s="opt-eau">
+        <span class="opt-text">💧 Verre d'eau</span>
+        <span class="opt-desc">Pour hydrater mon cerveau</span>
+      </label>
+    </div>
+    <div class="write-field">
+      <label>Quel est l'élément qui te distrait le plus sur ton bureau ? Comment vas-tu le cacher ?</label>
+      <textarea data-s="distraction-plan" data-req placeholder="Ex: Ma console, je la mets dans le tiroir..."></textarea>
+    </div>
+  </div>
+
+  <!-- ETAPE 2 -->
+  <div class="ritual-step" data-section="2">
+    <div class="sec-title">
+      <div class="sec-dot"></div>
+      <span class="sec-label">Étape 2 — L'ancrage physique</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="step-header">
+      <div class="step-num">2</div>
+      <div class="step-title">Mon geste de mise à feu</div>
+    </div>
+    <div style="font-size:13px; color:#64748b; margin-bottom:12px;">Choisis un petit geste physique pour dire à ton corps : "C'est parti !"</div>
+    <div class="options-grid">
+      <label class="opt-label">
+        <input type="radio" name="ancrage" data-s="ancrage-r1" value="respirer" data-req>
+        <span class="opt-text">🌬️ 3 respirations</span>
+        <span class="opt-desc">Inspirer 4s, bloquer 2s, expirer 6s</span>
+      </label>
+      <label class="opt-label">
+        <input type="radio" name="ancrage" data-s="ancrage-r2" value="etirer">
+        <span class="opt-text">🙆‍♂️ Un grand étirement</span>
+        <span class="opt-desc">Lever les bras vers le ciel</span>
+      </label>
+      <label class="opt-label">
+        <input type="radio" name="ancrage" data-s="ancrage-r3" value="mains">
+        <span class="opt-text">👏 Frotter les mains</span>
+        <span class="opt-desc">Énergiquement pendant 5 secondes</span>
+      </label>
+    </div>
+    <div class="write-field">
+      <label>Ou invente ton propre geste rapide :</label>
+      <textarea data-s="ancrage-perso" placeholder="Décris ton geste ici..."></textarea>
+    </div>
+  </div>
+
+  <!-- ETAPE 3 -->
+  <div class="ritual-step" data-section="3">
+    <div class="sec-title">
+      <div class="sec-dot"></div>
+      <span class="sec-label">Étape 3 — L'Organisation</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="step-header">
+      <div class="step-num">3</div>
+      <div class="step-title">Mes 3 objets indispensables</div>
+    </div>
+    <div class="options-grid">
+      <div class="write-field" style="margin-top:0">
+        <label>Objet 1</label>
+        <input type="text" data-s="objet-1" data-req placeholder="Ex: Trousse complète">
+      </div>
+      <div class="write-field" style="margin-top:0">
+        <label>Objet 2</label>
+        <input type="text" data-s="objet-2" data-req placeholder="Ex: Agenda / Pronote">
+      </div>
+      <div class="write-field" style="margin-top:0">
+        <label>Objet 3</label>
+        <input type="text" data-s="objet-3" data-req placeholder="Ex: Cahier de cours">
+      </div>
+    </div>
+  </div>
+
+  <!-- ETAPE 4 -->
+  <div class="ritual-step" data-section="4">
+    <div class="sec-title">
+      <div class="sec-dot"></div>
+      <span class="sec-label">Étape 4 — Le Décollage</span>
+      <span class="sec-ok" style="margin-left:auto">✓</span>
+    </div>
+    <div class="step-header">
+      <div class="step-num">4</div>
+      <div class="step-title">La règle des 5 secondes</div>
+    </div>
+    <div class="intro-box" style="background:#fff7ed; border-color:var(--orange); color:#9a3412;">
+      Quand tout est prêt, compte à l'envers : <strong>5 - 4 - 3 - 2 - 1 - ACTION !</strong> À "Action", tu ouvres ton cahier sans réfléchir.
+    </div>
+    <div class="countdown-row">
+      <div class="c-box">5</div>
+      <div class="c-box">4</div>
+      <div class="c-box">3</div>
+      <div class="c-box">2</div>
+      <div class="c-box">1</div>
+    </div>
+    <div class="write-field" style="margin-top:20px;">
+      <label>Quelle est la TOUTE PREMIÈRE micro-tâche que tu vas faire à "ACTION" ?</label>
+      <input type="text" data-s="micro-tache" data-req placeholder="Ex: Écrire le titre du chapitre ou la date.">
+    </div>
+  </div>
+
+  <!-- CONTRAT -->
+  <div class="power-move-box" data-section="5">
+    <div class="pm-header">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>
+      Mon Contrat de Champion
+    </div>
+    <div style="font-size:14px; line-height:1.7; color:#7c2d12;">
+      Moi, <span id="nom-display" style="font-weight:800; border-bottom:2px solid var(--orange); padding:0 5px;">________</span>, je m'engage à tester ce rituel pendant <strong>7 jours</strong>. <br>
+      Si mon cerveau essaie de me freiner, je lui dirai : <em>"Regarde, c'est juste un rituel de 2 minutes, on commence facile."</em>
+    </div>
+    <div style="margin-top:15px; display:flex; align-items:center; gap:10px;">
+      <label style="font-size:13px; font-weight:700; cursor:pointer; display:flex; align-items:center; gap:8px;">
+        <input type="checkbox" data-s="contrat-ok" data-req style="width:18px; height:18px;"> Je signe ce contrat !
+      </label>
+    </div>
+    <span class="sec-ok" style="display:none">✓</span>
+  </div>
+
+  <!-- Footer avec Logo Image -->
+  <div class="footer">
+    <div class="footer-code">C01-S03 · Initiation devoirs · Section 03 — Agir · v4.1 Harmonisée · Avril 2026</div>
+    <div class="footer-brand-logo">
+        <img src="../assets/logo.png" onerror="this.src='https://movetotop.com/wp-content/uploads/2023/04/MTT_Logo_2023.png'" alt="Logo Move to Top">
+    </div>
+    <div class="footer-url" style="font-size: 10px; color: #9ca3af;">movetotop.com</div>
+  </div>
+
+</div>
+
+<div class="print-bar">
+  <button class="btn-print" id="btn-print" onclick="window.print()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Imprimer mon rituel (PDF)
+  </button>
+</div>
+
+<div id="celebration">🎉 Bravo ! Ton rituel est prêt !</div>
+
+<script>
+const ID="mtt-c01a-s03-rituel";
+
+function save(k,v){try{localStorage.setItem(ID+":"+k,v);pulse();}catch(e){}}
+function load(k){try{return localStorage.getItem(ID+":"+k);}catch(e){return null;}}
+
+function pulse(){
+  const s=document.getElementById("saved-ind");
+  s.style.opacity="1";
+  clearTimeout(s._t);
+  s._t=setTimeout(()=>s.style.opacity="0",1500);
+}
+
+function showBanner(msg,dur){
+  const b=document.getElementById("celebration");
+  b.textContent=msg;
+  b.style.opacity="1";
+  setTimeout(()=>b.style.opacity="0",dur);
+}
+
+let _celeb=new Set();
+
+function checkSection(sec){
+  const reqs=[...sec.querySelectorAll("[data-req]")];
+  if(!reqs.length) return false;
+  
+  const radios = [...new Set(reqs.filter(r => r.type === 'radio').map(r => r.name))];
+  const others = reqs.filter(r => r.type !== 'radio');
+  
+  const othersDone = others.every(f => f.type === "checkbox" ? f.checked : f.value.trim() !== "");
+  const radiosDone = radios.every(name => [...sec.querySelectorAll(`input[name="${name}"]`)].some(r => r.checked));
+  
+  const done = othersDone && radiosDone;
+  const was = sec.classList.contains("section-complete");
+  sec.classList.toggle("section-complete", done);
+  
+  if(done && !was && !_celeb.has(sec.dataset.section)){
+    _celeb.add(sec.dataset.section);
+    showBanner("✓ Étape validée !", 2000);
+  }
+  return done;
+}
+
+function checkAll(){
+  const secs=[...document.querySelectorAll("[data-section]")];
+  const n=secs.filter(s=>checkSection(s)).length;
+  const pct=secs.length?Math.round(n/secs.length*100):0;
+  
+  document.getElementById("prog-fill").style.width=pct+"%";
+  document.getElementById("prog-txt").textContent=n+" section"+(n>1?"s":"")+" sur "+secs.length+" complétée"+(n>1?"s":"");
+  
+  const nomInput = document.getElementById("nom");
+  document.getElementById("nom-display").textContent = nomInput.value.trim() || "________";
+
+  if(n===secs.length && secs.length > 0) {
+    const btn = document.getElementById("btn-print");
+    btn.classList.add("complete");
+    btn.innerHTML = "🚀 Rituel prêt — Imprimer / PDF";
+  }
+}
+
+function grow(el){
+  el.style.height="auto";
+  el.style.height=el.scrollHeight+"px";
+}
+
+document.querySelectorAll("input[type=text], textarea").forEach(el=>{
+  const sv=load(el.dataset.s);
+  if(sv && !el.value) el.value=sv;
+  if(el.tagName === "TEXTAREA") grow(el);
+  el.addEventListener("input",()=>{
+    save(el.dataset.s, el.value);
+    checkAll();
+  });
+});
+
+document.querySelectorAll("input[type=checkbox], input[type=radio]").forEach(el=>{
+  const sv=load(el.dataset.s);
+  if(sv === "1" || (el.type === 'radio' && load('radio:'+el.name) === el.value)) el.checked=true;
+  el.addEventListener("change",()=>{
+    if(el.type === 'radio') {
+       save('radio:'+el.name, el.value);
+    } else {
+       save(el.dataset.s, el.checked ? "1" : "0");
+    }
+    checkAll();
+  });
+});
+
+window.onload = () => { checkAll(); };
+</script>
+</body>
+</html>
